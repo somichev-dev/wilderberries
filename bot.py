@@ -1,31 +1,28 @@
 import discord
-from discord.ext import commands
 import random, time
-from product import MAX_PRODUCT_ID, Product, CaptchaException, ProductNotFoundException
+from product import get_random_id, Product, CaptchaException, ProductNotFoundException
 
 DESTINATION_CHANNEL = 1316185782335307826
-SEARCH_THRESHOLD = 10
+SEARCH_THRESHOLD = 20
 
-intents = discord.Intents.default()
-bot = commands.Bot(command_prefix="/", intents=intents)
+bot = discord.Client(intents=discord.Intents.default())
 
 def get_random_product():
     product = None
     c = SEARCH_THRESHOLD
     while c > 0:
         try:
-            product_id = random.randint(1, MAX_PRODUCT_ID)
+            product_id = get_random_id()
             product = Product(product_id)
             return product
-        except CaptchaException:
-            print("КАПЧА КАПЧА АХУТНГ АХТУНГ КАПЧА НАДО ОБНОВИТЬ КУКИ НАМ ВСЕМ ПИЗДЕЦ")
-            return None
         except ProductNotFoundException:
             c-=1
             print(f"не нашли продукт {product_id}, до конца поиска {c} попыток")
-            time.sleep(1 + random.randint(0, 3))
+            time.sleep(5)
         except Exception as e:
             print(f"failed product id {product_id}")
+            print(product.product_link)
+            print(product._html_raw)
             raise e
             return None
     return None
@@ -38,21 +35,31 @@ async def on_ready():
     if product == None:
         await bot.get_channel(DESTINATION_CHANNEL).send(":(")
         exit()
-    ## this is a happy path
+    embed = await construct_embed(product)
+    try:
+        await bot.get_channel(DESTINATION_CHANNEL).send(embed=embed)
+    except discord.errors.HTTPException as e:
+        print(f"failed product id {product._product_id}")
+        print(product.thumbanil_link)
+        raise e
+    await bot.close()
+
+async def construct_embed(product: Product) -> discord.Embed:
     embed=discord.Embed(
         title=product.name,
         url=product.product_link,
         color=0x1a5fb4
     )
-    embed.set_author(name="товар дня озон ру")
+    embed.set_author(name="товар дня вб ру")
     embed.add_field(
         name="Рейтинг",
         value=f"{product.rating} :star: ({product.rating_amount})", inline=True
     )
     embed.add_field(name="Цена", value=product.cost, inline=True)
     embed.set_image(url=product.thumbnail_link)
-    await bot.get_channel(DESTINATION_CHANNEL).send(embed=embed)
-    await bot.close()
+    with open("flavors.txt", "r") as f:
+        embed.set_footer(text=random.choice(f.readlines()).rstrip('\n'))
+    return embed
 
 with open("token", "r") as f:
     token = f.read()

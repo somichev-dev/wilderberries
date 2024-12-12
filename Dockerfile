@@ -10,12 +10,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY bot.py .
 COPY product.py .
 COPY token .
+COPY flavors.txt .
 
 RUN apk add chromium
 
-RUN touch crontab.tmp \
-    && echo "30 7 * * * python ./bot.py" > crontab.tmp \
-    && crontab crontab.tmp \
-    && rm -rf crontab.tmp
-
-CMD ["/usr/sbin/crond", "-f", "-d", "0"]
+CMD ["sh"]
