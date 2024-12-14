@@ -32,7 +32,7 @@ class Product():
         ## Проверка на существование страницы
         if(len(self._soup.select(".content404__title")) > 0):
             raise ProductNotFoundException
-        if(len(self._soup.select(".content500:__title")) > 0):
+        if(len(self._soup.select(".content500__title")) > 0):
             raise ProductNotFoundException
         if(len(self._soup.select(".product-page__title")) == 0):
             raise ProductNotFoundException

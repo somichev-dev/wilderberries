@@ -3,15 +3,13 @@ FROM python:3.12.8-alpine
 WORKDIR /root
 
 COPY requirements.txt .
-
-RUN apk add gcc python3-dev musl-dev linux-headers
-RUN pip install --no-cache-dir -r requirements.txt
-
 COPY bot.py .
 COPY product.py .
 COPY token .
 COPY flavors.txt .
+COPY config.toml .
 
-RUN apk add chromium
+RUN apk add gcc python3-dev musl-dev linux-headers chromium
+RUN pip install --no-cache-dir -r requirements.txt
 
-CMD ["sh"]
+CMD ["python", "./bot.py"]

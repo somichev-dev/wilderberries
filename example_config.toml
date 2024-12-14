@@ -1,0 +1,6 @@
+# rename this file to config.toml if you wish to use it
+token = "[your token here]"
+# your channel id here
+channel = 0
+# amount of attempts that will be made when searching for a product
+threshold = 20

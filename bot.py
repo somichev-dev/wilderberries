@@ -1,9 +1,11 @@
+import random
+import time
+import tomllib
 import discord
-import random, time
-from product import get_random_id, Product, CaptchaException, ProductNotFoundException
+from product import get_random_id, Product, ProductNotFoundException
 
-DESTINATION_CHANNEL = 1316185782335307826
-SEARCH_THRESHOLD = 20
+DESTINATION_CHANNEL = None
+SEARCH_THRESHOLD = None
 
 bot = discord.Client(intents=discord.Intents.default())
 
@@ -21,10 +23,7 @@ def get_random_product():
             time.sleep(5)
         except Exception as e:
             print(f"failed product id {product_id}")
-            print(product.product_link)
-            print(product._html_raw)
             raise e
-            return None
     return None
 
 @bot.event
@@ -57,10 +56,17 @@ async def construct_embed(product: Product) -> discord.Embed:
     )
     embed.add_field(name="Цена", value=product.cost, inline=True)
     embed.set_image(url=product.thumbnail_link)
-    with open("flavors.txt", "r") as f:
+    with open("flavors.txt", "r", encoding="utf-8") as f:
         embed.set_footer(text=random.choice(f.readlines()).rstrip('\n'))
     return embed
 
-with open("token", "r") as f:
-    token = f.read()
+def main():
+    global DESTINATION_CHANNEL, SEARCH_THRESHOLD
+    config = tomllib.load(open("config.toml", "rb"))
+    token = config["token"]
+    DESTINATION_CHANNEL = config["channel"]
+    SEARCH_THRESHOLD = config["threshold"]
     bot.run(token)
+
+if __name__ == "__main__":
+    main()
