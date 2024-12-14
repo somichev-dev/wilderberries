@@ -3,3 +3,19 @@
 
 # Зачем это нужно?
 Не могу сказать.
+
+# Установка
+## Dockerfile
+```bash
+docker build -t wilderberries-app .
+docker run wilderberries-app
+```
+## Установка напрямую
+```bash
+git clone https://github.com/somichev-dev/wilderberries.git
+cd wilderberries
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python ./bot.py
+```
