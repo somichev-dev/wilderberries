@@ -7,6 +7,8 @@
 # Установка
 ## Dockerfile
 ```bash
+git clone https://github.com/somichev-dev/wilderberries.git
+cd wilderberries
 docker build -t wilderberries-app .
 docker run wilderberries-app
 ```
