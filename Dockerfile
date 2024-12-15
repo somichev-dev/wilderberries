@@ -5,7 +5,6 @@ WORKDIR /root
 COPY requirements.txt .
 COPY bot.py .
 COPY product.py .
-COPY token .
 COPY flavors.txt .
 COPY config.toml .
 
